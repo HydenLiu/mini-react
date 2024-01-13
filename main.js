@@ -1,5 +1,5 @@
-import React from './core/React.js'
 import ReactDom from './core/ReactDom.js'
+import App from './App.js'
 
 // 1、页面上线展示 “mini-react”
 // const Root = document.querySelector("#root") // document.getElementById("root")
@@ -72,12 +72,11 @@ import ReactDom from './core/ReactDom.js'
 
 //   container.append(dom)
 // }
-const el = React.createElement('div', { id: 'createElement', class: 'text-red' }, 'mini-react', '!!!')
 // render(el, Root)
 
 // 3、目标：ReactDom.createRoot(document.getElementById("root")).render(<App />)
 
 
-ReactDom.createRoot(document.getElementById("root")).render(el)
+ReactDom.createRoot(document.getElementById("root")).render(App)
 
 
