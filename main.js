@@ -27,6 +27,28 @@ const el = {
   },
 }
 
+function createTextNode (nodeValue) {
+  return {
+    type: "TEXT_ELEMENT",
+    props: {
+      nodeValue,
+      children: []
+    }
+  }
+}
+
+function createElement (type, props, ...children) {
+  return {
+    type,
+    props: {
+      ...props,
+      children
+    }
+  }
+}
+
+console.log(createElement('div', { id: 'createElement', class: 'text-red' }, createTextNode('mini-react')))
+
 function render (el, container) {
   const { type, props } = el
   const dom = el.type === 'TEXT_ELEMENT' ? document.createTextNode(props.nodeValue) : document.createElement(type)
@@ -46,7 +68,9 @@ function render (el, container) {
   container.append(dom)
 }
 
-render(el, Root)
+// render(el, Root)
+
+// 
 
 
 
