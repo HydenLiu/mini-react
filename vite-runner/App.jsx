@@ -7,7 +7,7 @@ import React from './core/React.js'
 const App = <div>mini-react</div>
 
 function AppOne(){
-  return <div>mini-react</div>
+  return <div>mini-react!!!</div>
 }
 console.log(AppOne)
 
