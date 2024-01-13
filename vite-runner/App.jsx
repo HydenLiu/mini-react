@@ -1,5 +1,4 @@
 // js pragma
-// 这个可以自定义React名字 /**@jsx HReact.createElement */
 
 import React from './core/React.js'
 // const el = React.createElement('div', { id: 'createElement', class: 'text-red' }, 'mini-react', '!!!')
