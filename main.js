@@ -1,5 +1,8 @@
+import React from './core/React.js'
+import ReactDom from './core/ReactDom.js'
+
 // 1、页面上线展示 “mini-react”
-const Root = document.querySelector("#root") // document.getElementById("root")
+// const Root = document.querySelector("#root") // document.getElementById("root")
 // const TextNode = document.createTextNode("mini-react")
 
 // Root.appendChild(TextNode)
@@ -11,68 +14,70 @@ const Root = document.querySelector("#root") // document.getElementById("root")
 // console.log(dom)
 
 // 2、vdom, Tip: 容易忘记react vdom的数据结构
-const el = {
-  type: "div",
-  props: {
-    id: "id",
-    children: [
-      {
-        type: "TEXT_ELEMENT",
-        props: {
-          nodeValue: "mini-react",
-          children: []
-        }
-      }
-    ]
-  },
-}
+// const el = {
+//   type: "div",
+//   props: {
+//     id: "id",
+//     children: [
+//       {
+//         type: "TEXT_ELEMENT",
+//         props: {
+//           nodeValue: "mini-react",
+//           children: []
+//         }
+//       }
+//     ]
+//   },
+// }
 
-function createTextNode (nodeValue) {
-  return {
-    type: "TEXT_ELEMENT",
-    props: {
-      nodeValue,
-      children: []
-    }
-  }
-}
+// function createTextNode (nodeValue) {
+//   return {
+//     type: "TEXT_ELEMENT",
+//     props: {
+//       nodeValue,
+//       children: []
+//     }
+//   }
+// }
 
-function createElement (type, props, ...children) {
-  return {
-    type,
-    props: {
-      ...props,
-      children
-    }
-  }
-}
+// function createElement (type, props, ...children) {
+//   return {
+//     type,
+//     props: {
+//       ...props,
+//       children: children.map(child => {
+//         return typeof child === 'string' ? createTextNode(child) : child
+//       })
+//     }
+//   }
+// }
 
-console.log(createElement('div', { id: 'createElement', class: 'text-red' }, createTextNode('mini-react')))
+// console.log(createElement('div', { id: 'createElement', class: 'text-red' }, createTextNode('mini-react')))
 
-function render (el, container) {
-  const { type, props } = el
-  const dom = el.type === 'TEXT_ELEMENT' ? document.createTextNode(props.nodeValue) : document.createElement(type)
+// function render (el, container) {
+//   const { type, props } = el
+//   const dom = el.type === 'TEXT_ELEMENT' ? document.createTextNode(props.nodeValue) : document.createElement(type)
 
-  // 遍历props，排除children
-  Object.keys(props).forEach(key => {
-    if (key !== 'children') {
-      dom[key] = props[key]
-    }
-  })
+//   // 遍历props，排除children
+//   Object.keys(props).forEach(key => {
+//     if (key !== 'children') {
+//       dom[key] = props[key]
+//     }
+//   })
 
-  // 处理children
-  props.children.forEach(child => {
-    render(child, dom)
-  })
+//   // 处理children
+//   props.children.forEach(child => {
+//     render(child, dom)
+//   })
 
-  container.append(dom)
-}
-
+//   container.append(dom)
+// }
+const el = React.createElement('div', { id: 'createElement', class: 'text-red' }, 'mini-react', '!!!')
 // render(el, Root)
 
-// 
+// 3、目标：ReactDom.createRoot(document.getElementById("root")).render(<App />)
 
 
-
+ReactDom.createRoot(document.getElementById("root")).render(el)
 
 
