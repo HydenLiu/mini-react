@@ -23,6 +23,7 @@ function createElement (type, props, ...children) {
 }
 
 let root = null
+let currentRoot = null
 let nextWorkOfUnit = null
 
 function render (el, container) {
@@ -69,6 +70,7 @@ function workLoop (deadline) {
 
 function commitRoot () {
   commitWork(root.child);
+  currentRoot = root
   root = null;
 }
 
@@ -78,34 +80,91 @@ function commitWork (fiber) {
   while (!fiberParent.dom) {
     fiberParent = fiberParent.parent;
   }
-  if (fiber.dom) fiberParent.dom.append(fiber.dom);
+
+  if (fiber.effectTag === 'update') {
+    updateProps(fiber.dom, fiber.props, fiber.alternate?.props)
+  } else if (fiber.effectTag === 'placement') {
+    if (fiber.dom) fiberParent.dom.append(fiber.dom);
+  }
+
   commitWork(fiber.child);
   commitWork(fiber.sibling);
 }
 
 function createDom (type) {
-  return type === 'TEXT_ELEMENT' ? document.createTextNode('') : document.createElement(type)
+  return type === 'TEXT_ELEMENT'
+    ? document.createTextNode('')
+    : document.createElement(type)
 }
 
-function updateProps (dom, props) {
-  Object.keys(props).forEach(key => {
+function updateProps (dom, nextProps, prevProps) {
+  // Object.keys(props).forEach(key => {
+  //   if (key !== 'children') {
+  //     dom[key] = props[key]
+  //   }
+  // })
+
+  // 1. 老的有， 新的没有 -》 删除 
+  Object.keys(prevProps).forEach(key => {
     if (key !== 'children') {
-      dom[key] = props[key]
+      if (!(key in nextProps)) {
+        dom.removeAttribute(key)
+      }
     }
   })
+  // 2. 新的有，老得没有 -》 添加
+  // 3. 新的有，老的也有 -》 修改
+  Object.keys(nextProps).forEach(key => {
+    if (key !== 'children') {
+      if (nextProps[key] !== prevProps[key]) {
+        if (key.startsWith('on')) {
+          const eventType = key.slice(2).toLowerCase()
+
+          dom.removeEventListener(eventType, prevProps[key])
+          dom.addEventListener(eventType, nextProps[key])
+        } else {
+          dom[key] = props[key]
+        }
+      }
+    }
+  })
+
+
 }
 
 function initChildren (fiber, children) {
+  let oldFiber = fiber.alternate?.child
   // const children = fiber.props.children
   let preChild = null
   children.forEach((child, index) => {
-    const newFiber = {
-      type: child.type,
-      props: child.props,
-      child: null,
-      parent: fiber,
-      sibling: null,
-      dom: null
+    const isSameType = oldFiber && oldFiber.type === child.type;
+    let newFiber
+    if (isSameType) {
+      // update
+      newFiber = {
+        type: child.type,
+        props: child.props,
+        child: null,
+        parent: fiber,
+        sibling: null,
+        dom: oldFiber.dom,
+        effectTag: 'update',
+        alternate: oldFiber
+      }
+    } else {
+      newFiber = {
+        type: child.type,
+        props: child.props,
+        child: null,
+        parent: fiber,
+        sibling: null,
+        dom: null,
+        effectTag: 'placement'
+      }
+    }
+
+    if (oldFiber) {
+      oldFiber = oldFiber.sibling
     }
 
     if (index === 0) {
@@ -126,7 +185,7 @@ function updateFunctionComponent (fiber) {
 function updateHostFunction (fiber) {
   if (!fiber.dom) {
     const dom = (fiber.dom = createDom(fiber.type));
-    updateProps(dom, fiber.props);
+    updateProps(dom, fiber.props, {});
   }
 
   const children = fiber.props.children;
@@ -153,7 +212,17 @@ function performWorkOfUnit (fiber) {
 
 requestIdleCallback(workLoop)
 
+function update () {
+  nextWorkOfUnit = {
+    dom: currentRoot.dom,
+    props: currentRoot.props,
+    alternate: currentRoot
+  }
+  root = nextWorkOfUnit
+}
+
 const React = {
+  update,
   createTextNode,
   createElement,
   render
