@@ -123,7 +123,7 @@ function updateProps (dom, nextProps, prevProps) {
           dom.removeEventListener(eventType, prevProps[key])
           dom.addEventListener(eventType, nextProps[key])
         } else {
-          dom[key] = props[key]
+          dom[key] = nextProps[key]
         }
       }
     }

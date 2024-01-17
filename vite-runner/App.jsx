@@ -1,7 +1,4 @@
-// js pragma
-
-import React from './core/React.js'
-// const el = React.createElement('div', { id: 'createElement', class: 'text-red' }, 'mini-react', '!!!')
+import React from "./core/React.js";
 
 let count = 10
 function Counter({ num }) {
@@ -22,7 +19,6 @@ function Counter({ num }) {
 function AppOne() {
   return <div>mini-react!!!</div>
 }
-console.log(AppOne)
 
 function App() {
   return (
