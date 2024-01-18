@@ -14,16 +14,28 @@ function Counter({ num }) {
     React.update()
   }
 
-  // const foo = <div>foo</div>
-  function Foo() {
-    return <div>foo</div>
-  }
-  const bar = <p>bar</p>
+  const foo = (
+    <div>
+      foo
+      <div>child1</div>
+      <div>child2</div>
+    </div>
+  )
+
+  // function Foo() {
+  //   return (
+  //     <div>
+  //       foo
+  //       <div>child</div>
+  //     </div>
+  //   )
+  // }
+  const bar = <div>bar</div>
 
   return (
     <div>
       count: {count}
-      <div>{showBar ? bar : <Foo />}</div>
+      <div>{showBar ? bar : foo}</div>
       <button onClick={handleBarClick}>click</button>
     </div>
   )
