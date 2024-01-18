@@ -26,6 +26,7 @@ let wipRoot = null
 let currentRoot = null
 let nextWorkOfUnit = null
 let deletions = []
+let wipFiber = null
 
 function render (el, container) {
   wipRoot = {
@@ -59,6 +60,9 @@ function workLoop (deadline) {
 
   while (!shouldYieId && nextWorkOfUnit) {
     nextWorkOfUnit = performWorkOfUnit(nextWorkOfUnit)
+    if(wipRoot?.sibling?.type === nextWorkOfUnit?.type){
+      nextWorkOfUnit = undefined
+    }
     shouldYieId = deadline.timeRemaining() < 1
   }
 
@@ -194,7 +198,7 @@ function reconcileChildren (fiber, children) {
       preChild.sibling = newFiber
     }
 
-    if(newFiber){
+    if (newFiber) {
       preChild = newFiber
     }
   })
@@ -206,6 +210,7 @@ function reconcileChildren (fiber, children) {
 }
 
 function updateFunctionComponent (fiber) {
+  wipFiber = fiber
   const children = [fiber.type(fiber.props)];
   reconcileChildren(fiber, children);
 }
@@ -241,12 +246,23 @@ function performWorkOfUnit (fiber) {
 requestIdleCallback(workLoop)
 
 function update () {
-  wipRoot = {
-    dom: currentRoot.dom,
-    props: currentRoot.props,
-    alternate: currentRoot
+  let currentFiber = wipFiber
+
+  return () => {
+    console.log(currentFiber)
+
+    wipRoot = {
+      ...currentFiber,
+      alternate: currentFiber
+    }
+
+    // wipRoot = {
+    //   dom: currentRoot.dom,
+    //   props: currentRoot.props,
+    //   alternate: currentRoot
+    // }
+    nextWorkOfUnit = wipRoot
   }
-  nextWorkOfUnit = wipRoot
 }
 
 const React = {
