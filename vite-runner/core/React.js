@@ -77,8 +77,8 @@ function commitRoot () {
   deletions = []
 }
 
-function commitDeletion(fiber){
-  if(fiber.dom) {
+function commitDeletion (fiber) {
+  if (fiber.dom) {
     let fiberParent = fiber.parent;
     while (!fiberParent.dom) {
       fiberParent = fiberParent.parent;
@@ -167,18 +167,19 @@ function reconcileChildren (fiber, children) {
         alternate: oldFiber
       }
     } else {
-      newFiber = {
-        type: child.type,
-        props: child.props,
-        child: null,
-        parent: fiber,
-        sibling: null,
-        dom: null,
-        effectTag: 'placement'
+      if (child) {
+        newFiber = {
+          type: child.type,
+          props: child.props,
+          child: null,
+          parent: fiber,
+          sibling: null,
+          dom: null,
+          effectTag: 'placement'
+        }
       }
 
-      if(oldFiber){
-        console.log('oldFiber', oldFiber)
+      if (oldFiber) {
         deletions.push(oldFiber)
       }
     }
@@ -193,10 +194,12 @@ function reconcileChildren (fiber, children) {
       preChild.sibling = newFiber
     }
 
-    preChild = newFiber
+    if(newFiber){
+      preChild = newFiber
+    }
   })
 
-  while(oldFiber){
+  while (oldFiber) {
     deletions.push(oldFiber)
     oldFiber = oldFiber.sibling
   }

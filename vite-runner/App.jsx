@@ -35,7 +35,8 @@ function Counter({ num }) {
   return (
     <div>
       count: {count}
-      <div>{showBar ? bar : foo}</div>
+      {/* <div>{showBar ? bar : foo}</div> */}
+      <div>{showBar && bar}</div>
       <button onClick={handleBarClick}>click</button>
     </div>
   )
